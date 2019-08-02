@@ -1,6 +1,8 @@
 package com.luckybees.messager;
 
 import com.luckybees.beichen.dto.MsgDTO;
+import com.tiefan.iwu.preaprv.core.mq.extension.ExternalMXResVO;
+import com.tiefan.iwu.preaprv.enums.CreditRuleEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -30,24 +32,23 @@ public class SenderWithCallback {
     public void send() {
         String exchange = RabbitConfig.EXCHANGE_DEFAULT;
         String routingKey = RabbitConfig.RK_BEICHEN_REPORT_RESULT;
-        String message = LocalDateTime.now().toString() + "发送一条消息.";
+        ExternalMXResVO  externalMXResVO= new ExternalMXResVO();
+        externalMXResVO.setMobile("1343243242");
+        externalMXResVO.setName("vdfsfsd");
+        externalMXResVO.setIdCard("234234234");
+        externalMXResVO.setScore(232);
+//        ex.setResult(CreditRuleEnum.PASS.toString());
+        externalMXResVO.setRef("101f0ede013f3482");
+        externalMXResVO.setTaskId("23232");
+        externalMXResVO.setRequestNo("23");
+        externalMXResVO.setErrMsg("");
+        externalMXResVO.setIspDataExpire(1);
+        externalMXResVO.setErrCode("");
 
-        MsgDTO msg = new MsgDTO();
-        HashMap decision= new HashMap<String,Object>();
-        decision.put("score",232);
-        decision.put("result","pass");
-        msg.setDecision(decision);
-        msg.setIdCard("3101139191992929233");
-        msg.setMobile("13988383883");
-        msg.setRef("12");
-        msg.setName("小米");
-        msg.setOrganizationKey("1");
-        msg.setProductKey("1");
-        msg.setSn(UUID.randomUUID().toString());
-        msg.setTimestamp(java.util.Calendar.getInstance().getTimeInMillis());
-        rabbitTemplate.convertAndSend(exchange, routingKey, msg);
 
-        log.info("发送一条消息,exchange:[{}],routingKey:[{}],message:[{}]", exchange, routingKey, message);
+        rabbitTemplate.convertAndSend(exchange, routingKey, externalMXResVO);
+
+        log.info("发送一条消息,exchange:[{}],routingKey:[{}],message:[{}]", exchange, routingKey, externalMXResVO);
 
     }
 

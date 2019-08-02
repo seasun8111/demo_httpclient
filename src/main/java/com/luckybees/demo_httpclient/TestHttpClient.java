@@ -5,8 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luckybees.beichen.dto.CallbackDTO;
 import com.luckybees.beichen.dto.CallbackDTOBizParams;
 import com.luckybees.beichen.dto.OrganResponseDTO;
+import com.luckybees.commons.AesECBUtil;
 import com.luckybees.commons.POJOConverter;
 import com.luckybees.commons.RSACoderUtil;
+import com.luckybees.demo_mysql.dao.ProductRepository;
+import com.luckybees.demo_mysql.po.Product;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +18,7 @@ import org.springframework.http.*;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,6 +30,7 @@ import java.util.concurrent.Callable;
 
 @RestController
 @RequestMapping(value = "/testHttpClient", produces = "application/json;charset=UTF-8")
+@Slf4j
 public class TestHttpClient {
 
     @Autowired
@@ -33,7 +39,8 @@ public class TestHttpClient {
     RabbitTemplate restTemplate;
 
 
-
+    @Autowired
+    ProductRepository productRepository;
 
 
     /*
@@ -53,21 +60,40 @@ public class TestHttpClient {
     @Autowired
     POJOConverter pojoConverter;
 
-    @RequestMapping(value="/organInterface")
+    @RequestMapping(value="/organInterface", method = RequestMethod.POST,  produces = "application/json;charset=UTF-8")
     public OrganResponseDTO organInterface(@RequestBody CallbackDTO json) {
+
+        log.info("收到json");
         ObjectMapper mapper = new ObjectMapper();
         OrganResponseDTO organResponseDTO = new OrganResponseDTO();
         organResponseDTO.setCode("500");
         organResponseDTO.setCostTime(233L);
         organResponseDTO.setMsg("失败");
         organResponseDTO.setSuccess(Boolean.FALSE);
-
+        System.out.println(json);
+        log.info("打印原始JSON========"+json);
         try {
-            String bizParamString = mapper.writeValueAsString(json.getBizParams());
-            String biztime = bizParamString + String.valueOf(json.getTimestamp());
-            Boolean verifyResult = RSACoderUtil.verify(biztime.getBytes(), pubKey, json.getSign());
-            System.out.println( "验签" + (verifyResult ? "成功":"失败"));
-            System.out.println("收到: "+json);
+
+            String bizParamsEn = json.getBizParams();
+            String aesKeyEn = json.getAesKey();
+            String productId = json.getProductId();
+            Product product = productRepository.findByVKey(productId);
+            String publicKey = product.getRsaPublicKey();
+            String aesKeyDe = RSACoderUtil.decryptAesKey(aesKeyEn, publicKey );
+            String bizParamDe = AesECBUtil.decrypt(bizParamsEn, aesKeyDe );
+            log.info(bizParamDe);
+            ObjectMapper objectMapper = new ObjectMapper();
+            CallbackDTOBizParams callbackDTOBizParams =
+                    objectMapper.readValue(bizParamDe, CallbackDTOBizParams.class);
+
+            System.out.println(callbackDTOBizParams);
+            String needSign = bizParamDe+json.getTimestamp();
+            Boolean verifyResult = RSACoderUtil.verify(
+                    needSign.getBytes(),
+                    product.getRsaPublicKey(),
+                    json.getSign());
+            log.info("====  verifyResult  ====  "+verifyResult);
+
             if(verifyResult) {
                 organResponseDTO.setCode("200");
                 organResponseDTO.setCostTime(233L);

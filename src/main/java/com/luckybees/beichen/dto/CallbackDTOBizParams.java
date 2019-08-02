@@ -3,6 +3,7 @@ package com.luckybees.beichen.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import java.util.HashMap;
 
 @Data
 @NoArgsConstructor
+@ToString
 public class CallbackDTOBizParams implements Serializable {
 
     private String organizationId;
@@ -38,5 +40,7 @@ public class CallbackDTOBizParams implements Serializable {
     private String mobile;
     private String idCard;
     private HashMap decisions;
+    private HashMap error;
+
 
 }

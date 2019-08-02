@@ -26,10 +26,9 @@ public class POJOConverter {
         callbackDTOBizParams.setProductId(msgDTO.getProductKey());
         callbackDTOBizParams.setDecisions(msgDTO.getDecision());
         callbackDTOBizParams.setSn(msgDTO.getSn());
-        callbackDTO.setBizParams(callbackDTOBizParams);
-
+        ObjectMapper objectMapper =new ObjectMapper();
+        callbackDTO.setBizParams(objectMapper.writeValueAsString(callbackDTOBizParams));
         callbackDTO.setTimestamp(java.util.Calendar.getInstance().getTimeInMillis());
-
         ObjectMapper mapper = new ObjectMapper();
 
         String callbackDTOBizParamsString = mapper.writeValueAsString(callbackDTOBizParams);

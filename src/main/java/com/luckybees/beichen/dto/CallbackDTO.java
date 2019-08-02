@@ -10,9 +10,12 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class CallbackDTO implements Serializable {
 
+
+    private String productId;
+    private String aesKey;
     private String sign;
     private Long timestamp;
 
-    private CallbackDTOBizParams bizParams;
+    private String bizParams;
 
 }

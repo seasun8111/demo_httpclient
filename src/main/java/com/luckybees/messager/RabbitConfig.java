@@ -81,66 +81,68 @@ public class RabbitConfig {
         return new DirectExchange(EXCHANGE_DEFAULT, true, false);
     }
 
-
-    //报告保存后通知队列
-    @Bean
-    public Queue reportSavedQueue() {
-        Map<String, Object> arguments = new HashMap<>(4);
-
-        return new Queue(QUEUE_BEICHEN_REPORT_SAVED, true, false, false, arguments);
-    }
-
-    //aprv结果通知队列
-    @Bean
-    public Queue aprvResultQueue() {
-        Queue queue = new Queue(QUEUE_BEICHEN_APRV_RESULT,true,false,false);
-        return queue;
-    }
-
-
-    //重试队列
-    @Bean
-    public Queue repeatTradeQueue() {
-        Queue queue = new Queue(QUEUE_BEICHEN_REPEAT,true,false,false);
-        return queue;
-    }
-
-
-    //死信队列  -- 消息在死信队列上堆积，消息超时时，会把消息转发到重试队列，转发队列根据消息内容再把转发到指定的重试队列上
-    @Bean
-    public Queue deadLetterQueue() {
-        Map<String, Object> arguments = new HashMap<>();
-        arguments.put("x-dead-letter-exchange", EXCHANGE_DEFAULT);
-        arguments.put("x-dead-letter-routing-key", RK_REPORT_QUEUE);
-        Queue queue = new Queue(QUEUE_BEICHEN_DLX,true,false,false,arguments);
-        return queue;
-    }
-
-    //绑定报告队列
-    @Bean
-    public Binding beiChenReportSavedBinding() {
-        return BindingBuilder.bind(reportSavedQueue()).to(defaultExchange()).with(RK_BEICHEN_REPORT_SAVED);
-    }
-
-    //绑定结果队列
-    @Bean
-    public Binding beiChenAprvResultBinding() {
-        return BindingBuilder.bind(aprvResultQueue()).to(defaultExchange()).with(RK_BEICHEN_REPORT_RESULT);
-    }
-
-
-    //绑定重试队列
-    @Bean
-    public Binding  repeatTradeBinding() {
-        return BindingBuilder.bind(repeatTradeQueue()).to(defaultExchange()).with(RK_REPORT_QUEUE);
-    }
-
-
-    //绑定死信队列
-    @Bean
-    public Binding  deadLetterBinding() {
-        return BindingBuilder.bind(deadLetterQueue()).to(defaultExchange()).with(RK_DEADLETTER_REPORT_);
-    }
-
+/*
+//
+//    //报告保存后通知队列
+//    @Bean
+//    public Queue reportSavedQueue() {
+//        Map<String, Object> arguments = new HashMap<>(4);
+//
+//        return new Queue(QUEUE_BEICHEN_REPORT_SAVED, true, false, false, arguments);
+//    }
+//
+//    //aprv结果通知队列
+//    @Bean
+//    public Queue aprvResultQueue() {
+//        Queue queue = new Queue(QUEUE_BEICHEN_APRV_RESULT,true,false,false);
+//        return queue;
+//    }
+//
+//
+//    //重试队列
+//    @Bean
+//    public Queue repeatTradeQueue() {
+//        Queue queue = new Queue(QUEUE_BEICHEN_REPEAT,true,false,false);
+//        return queue;
+//    }
+//
+//
+//    //死信队列  -- 消息在死信队列上堆积，消息超时时，会把消息转发到重试队列，转发队列根据消息内容再把转发到指定的重试队列上
+//    @Bean
+//    public Queue deadLetterQueue() {
+//        Map<String, Object> arguments = new HashMap<>();
+//        arguments.put("x-dead-letter-exchange", EXCHANGE_DEFAULT);
+//        arguments.put("x-dead-letter-routing-key", RK_REPORT_QUEUE);
+//        Queue queue = new Queue(QUEUE_BEICHEN_DLX,true,false,false,arguments);
+//        return queue;
+//    }
+//
+//    //绑定报告队列
+//    @Bean
+//    public Binding beiChenReportSavedBinding() {
+//        return BindingBuilder.bind(reportSavedQueue()).to(defaultExchange()).with(RK_BEICHEN_REPORT_SAVED);
+//    }
+//
+//    //绑定结果队列
+//    @Bean
+//    public Binding beiChenAprvResultBinding() {
+//        return BindingBuilder.bind(aprvResultQueue()).to(defaultExchange()).with(RK_BEICHEN_REPORT_RESULT);
+//    }
+//
+//
+//    //绑定重试队列
+//    @Bean
+//    public Binding  repeatTradeBinding() {
+//        return BindingBuilder.bind(repeatTradeQueue()).to(defaultExchange()).with(RK_REPORT_QUEUE);
+//    }
+//
+//
+//    //绑定死信队列
+//    @Bean
+//    public Binding  deadLetterBinding() {
+//        return BindingBuilder.bind(deadLetterQueue()).to(defaultExchange()).with(RK_DEADLETTER_REPORT_);
+//    }
+//
+*/
 
 }

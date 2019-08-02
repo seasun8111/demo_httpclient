@@ -2,7 +2,9 @@ package com.luckybees.demo_mysql.po;
 
 import com.luckybees.demo_mysql.bizStatus.LoanHistory;
 import com.luckybees.demo_mysql.bizStatus.ReportStatus;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -31,60 +33,72 @@ public class ReportProcessStatus implements Serializable {
     @Id
     @NonNull
     @GeneratedValue(strategy= GenerationType.AUTO)
+    @Column(nullable = false, columnDefinition = "bigint(20) NOT NULL AUTO_INCREMENT")
     private Long id;
 
-
     @NonNull
-    @Column(length = 64)
+    @Column(length = 64, nullable = false)
     private String ref;
     //FIRST | AGAIN
+
     @NonNull
-    @Column(length = 16)
+    @Column(length = 16, nullable = false)
     @Enumerated(EnumType.STRING)
     private LoanHistory loanHistory;
+
     @NonNull
     @ManyToOne
-    @JoinColumn(name="organizationId")
+    @JoinColumn(name="organizationId", nullable = false)
     private Organization organization;
-//    @NonNull
-//    @Column(length = 16)
-//    private String organizationId;
-//    @NonNull
-//    @Column(length = 16)
-//    private String productId;
+
     @NonNull
     @ManyToOne
-    @JoinColumn(name="productId")
+    @JoinColumn(name="productId", nullable = false)
     private Product product;
+
     @NonNull
-    @Column(length = 16)
+    @Column(length = 128, nullable = false)
+    private String channelName;
+
+    @NonNull
+    @Column(length = 64, nullable = false)
     private String sn;
+
     @NonNull
-    @Column(length = 16)
+    @Column(length = 16, nullable = false)
     private String name;
+
     @NonNull
-    @Column(length = 32)
+    @Column(length = 32, nullable = false)
     private String mobile;
-    @NonNull
-    @Column(length = 32)
+
+
+    @Column(length = 64, nullable = false)
     private String idCard;
+
     @NonNull
-    @Column(length = 256)
+    @Column(length = 256, nullable = false)
     private String fileUrl;
+
     @NonNull
-    @Column(length = 16)
+    @Column(length = 16, nullable = false, columnDefinition="varchar(16) DEFAULT 'PADDING'")
     @Enumerated(EnumType.STRING)
     private ReportStatus status;
-    @Column
+
+    @Column(nullable = false)
     private Integer score;
-    @Column
+
+    @Column(length = 16, nullable = false, columnDefinition="varchar(16) DEFAULT 'PADDING'")
     private String result;
-    @NonNull
-    @Column
+
+
+//    @Column(name="createDate", columnDefinition = "DATE DEFAULT CURRENT_DATE", nullable = false)
+    @Column(name="createDate", columnDefinition = "timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '建立时间'")
+//    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date createDate;
-    @Column
+
+//    @Column(name="updateDate", columnDefinition = "DATE DEFAULT CURRENT_DATE", nullable = false)
+    @Column(name="updateDate", columnDefinition = "timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '修改时间'")
+//    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date updateDate;
-
-
-
 }
